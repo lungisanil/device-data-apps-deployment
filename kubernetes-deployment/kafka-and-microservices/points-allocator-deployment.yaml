@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: points-allocator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: points-allocator
+  template:
+    metadata:
+      labels:
+        app: points-allocator
+        network/kafka-network: "true"
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://kafka:9092
+          image: points-allocator-image:latest
+          imagePullPolicy: IfNotPresent
+          name: points-allocator
+          ports:
+            - containerPort: 9003
+              protocol: TCP
+      restartPolicy: Always

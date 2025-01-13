@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-data-event-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-data-event-processor
+  template:
+    metadata:
+      labels:
+        app: device-data-event-processor
+        network/kafka-network: "true"
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://kafka:9092
+          image: device-data-event-processor-image:latest
+          imagePullPolicy: IfNotPresent
+          name: device-data-event-processor-container
+          ports:
+            - containerPort: 9002
+              protocol: TCP
+      restartPolicy: Always

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-data-event-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-data-event-consumer
+  template:
+    metadata:
+      labels:
+        app: device-data-event-consumer
+        network/kafka-network: "true"
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://kafka:9092
+          image: device-data-event-consumer-image:latest
+          imagePullPolicy: IfNotPresent
+          name: device-data-event-consumer-container
+          ports:
+            - containerPort: 9001
+      restartPolicy: Always

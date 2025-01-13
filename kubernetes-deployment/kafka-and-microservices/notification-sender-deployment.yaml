@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-sender
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-sender
+  template:
+    metadata:
+      labels:
+        app: notification-sender
+        network/kafka-network: "true"
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://kafka:9092
+          image: notification-sender-image:latest
+          imagePullPolicy: IfNotPresent
+          name: notification-sender-container
+          ports:
+            - containerPort: 9004
+      restartPolicy: Always
