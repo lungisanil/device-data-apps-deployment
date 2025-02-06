@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: device-data-event-processor
 spec:
-  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 9002

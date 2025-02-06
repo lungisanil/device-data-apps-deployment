@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: device-data-event-producer
 spec:
-  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 9000

@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: device-data-event-ingress
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - path: /device-data-event-producer-service
+            pathType: Prefix
+            backend:
+              service:
+                name: device-data-event-producer
+                port:
+                  number: 9000

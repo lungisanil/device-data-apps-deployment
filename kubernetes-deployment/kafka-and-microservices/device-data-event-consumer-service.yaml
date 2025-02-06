@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: device-data-event-consumer
 spec:
-  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 9001

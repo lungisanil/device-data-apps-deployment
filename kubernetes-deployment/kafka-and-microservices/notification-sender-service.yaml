@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: notification-sender
 spec:
-  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 9004
