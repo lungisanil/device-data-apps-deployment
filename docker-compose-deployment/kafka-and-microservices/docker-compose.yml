@@ -1,27 +1,15 @@
 ---
 version: '3.5'
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.1.0
-    ports:
-      - 2181:2181
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    container_name: sn-zookeeper
   kafka:
-    image: confluentinc/cp-kafka:7.1.0
-    depends_on:
-      - zookeeper
-    ports:
-      - 9092:9092
-    container_name: sn-kafka
+    image: 'bitnami/kafka:latest'
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     depends_on:
@@ -31,7 +19,6 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: PLAINTEXT://kafka:29092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
   device-data-event-producer:
     container_name: device-data-event-producer-container
     image: device-data-event-producer-image:latest
@@ -40,7 +27,7 @@ services:
     ports:
       - 9000:9000
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
   device-data-event-consumer:
     container_name: device-data-event-consumer-container
     image: device-data-event-consumer-image:latest
@@ -49,7 +36,7 @@ services:
     ports:
       - 9001:9001
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
   device-data-event-processor:
     container_name: device-data-event-processor-container
     image: device-data-event-processor-image:latest
@@ -58,7 +45,7 @@ services:
     ports:
       - 9002:9002
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
   points-allocator:
     container_name: points-allocator
     image: points-allocator-image:latest
@@ -67,7 +54,7 @@ services:
     ports:
       - 9003:9003
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
   notification-sender:
     container_name: notification-sender
     image: notification-sender-image:latest
@@ -76,4 +63,4 @@ services:
     ports:
       - 9004:9004
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
